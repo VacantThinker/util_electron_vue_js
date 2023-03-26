@@ -150,7 +150,7 @@ function getPathParent(logPath = false) {
 }
 
 /**
- * vite build -->
+ * npm run build (vite build) -->
  *
  * generate electron index.html -->
  *
@@ -175,16 +175,16 @@ function setupVueToElectron(
     const path = require('path');
     const parent = getPathParent();
 
-    console.log(`copying... `);
     let src = path.join('dist');
     let dest = path.join(parent, dirNameElectron, 'public');
     if (fs.existsSync(dest)) {
+      console.log(`dest exists --> rm ... ${dest}`);
       fs.rmSync(dest, {recursive: true, force: true});
     }
 
+    console.log(`copy ... ${src}`);
     fs.cpSync(src, dest, {recursive: true, force: true});
-
-    console.log(`end...`);
+    console.log(`end ... ${dest}`);
   });
 }
 
@@ -243,7 +243,7 @@ function openDirElectronOutSquirrel() {
 }
 
 const cmd = {
-  vite_build: `vite build`,
+  vite_build: `npm run build`,
 };
 
 module.exports = {

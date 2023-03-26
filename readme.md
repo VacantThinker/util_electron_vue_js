@@ -12,7 +12,7 @@ setupVueToElectron(title, dirNameElectron);
 #### setupVueToElectron()
 ```javascript
 /**
- * vite build -->
+ * npm run build (vite build) -->
  *
  * generate electron index.html -->
  *
