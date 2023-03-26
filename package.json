@@ -3,9 +3,7 @@
   "version": "1.0.1",
   "main": "index.js",
   "description": " config vue to electron-forge webpack",
-  "scripts": {
-    "git_push": "git add . && git commit -m 'update' && git push --force"
-  },
+  "scripts": {},
   "author": "vacantthinker",
   "license": "MIT"
 }
