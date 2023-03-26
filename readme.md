@@ -89,4 +89,16 @@ function readEnvFile(filename, logObj = false) {}
 /**
  * npm run make -->
  * 
- * then open out/make/
+ * then open out/make/squirrel.windows/x64/ dir
+ */
+function npmRunMakeOpenOutSquirrel(){}
+```
+
+---
+
+## how to install ?
+```shell
+npm install @vacantwalker/util_electron_vue_js -D
+```
+
+
