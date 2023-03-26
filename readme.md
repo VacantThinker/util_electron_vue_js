@@ -84,9 +84,9 @@ function readEnvFile(filename, logObj = false) {}
 
 ---
 
-## how to install ?
-```shell
-npm install @vacantwalker/util_electron_vue_js -D
-```
-
-
+#### npmRunMakeOpenOutSquirrel()
+```javascript
+/**
+ * npm run make -->
+ * 
+ * then open out/make/

@@ -1,8 +1,5 @@
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
-
 /**
  *
  * @param nameDir {String}
@@ -28,18 +25,18 @@ function deleteDir(nameDir) {
 function readEnvFile(filename, logObj = false) {
   const fs = require('fs');
   const path = require('path');
-  let buffer = fs.readFileSync(path.join(filename));
-  let textContent = buffer.toString();
+  const buffer = fs.readFileSync(path.join(filename));
+  const textContent = buffer.toString();
 
-  let split = textContent.split('\n');
+  const split = textContent.split('\n');
 
-  let reduce = split.filter((value) => {
+  const reduce = split.filter((value) => {
     return value.trim().length > 0;
   }).reduce((map, value) => {
-    let regexpKey = /.+(?=\=)/;
-    let envKey = value.match(regexpKey)[0];
-    let regexpVal = /(?<=\=).+/;
-    let envVal = value.match(regexpVal)[0].replace(/\"/g, '');
+    const regexpKey = /.+(?=\=)/;
+    const envKey = value.match(regexpKey)[0];
+    const regexpVal = /(?<=\=).+/;
+    const envVal = value.match(regexpVal)[0].replace(/\"/g, '');
 
     if (logObj) {
       console.log(`key=${envKey}\nvalue=${envVal}\n`);
@@ -168,15 +165,15 @@ function getPathParent(logPath = false) {
 function setupVueToElectron(
     title = 'index.html title',
     dirNameElectron = `xxx-electron`) {
-  execAsync(cmd.vite_build, () => {
+  execAsync(cmd.npm_build, () => {
     setupElectron_index_html(title);
     setupElectron_renderer_js();
     const fs = require('fs');
     const path = require('path');
     const parent = getPathParent();
 
-    let src = path.join('dist');
-    let dest = path.join(parent, dirNameElectron, 'public');
+    const src = path.join('dist');
+    const dest = path.join(parent, dirNameElectron, 'public');
     if (fs.existsSync(dest)) {
       console.log(`dest exists --> rm ... ${dest}`);
       fs.rmSync(dest, {recursive: true, force: true});
@@ -191,6 +188,7 @@ function setupVueToElectron(
 function execSync(cmd) {
   console.log(`execSync() cmd=${cmd}`);
   require('child_process').execSync(cmd);
+  console.log(`execSync() finished... cmd=${cmd}`);
 }
 
 function npmCacheClean() {
@@ -242,8 +240,22 @@ function openDirElectronOutSquirrel() {
   execAsync(cmd);
 }
 
+/**
+ * npm run make -->
+ *
+ * then open out/make/squirrel.windows/x64/ dir
+ */
+function npmRunMakeOpenOutSquirrel(){
+  execAsync(cmd.npm_make,() => {
+    openDirElectronOutSquirrel()
+  })
+}
+
 const cmd = {
-  vite_build: `npm run build`,
+  // `npm run build`
+  npm_build: `npm run build`,
+  // `start "npm run make" npm run make`
+  npm_make: `start "npm run make" npm run make`
 };
 
 module.exports = {
@@ -259,6 +271,7 @@ module.exports = {
   execSync: execSync,
   execAsync: execAsync,
   openDirElectronOutSquirrel: openDirElectronOutSquirrel,
+  npmRunMakeOpenOutSquirrel: npmRunMakeOpenOutSquirrel,
 
   npmCacheClean: npmCacheClean,
   npmInstall: npmInstall,
