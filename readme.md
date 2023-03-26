@@ -29,8 +29,7 @@ setupVueToElectron(title, dirNameElectron);
  */
 function setupVueToElectron(
     title = 'index.html title',
-    dirNameElectron
-        = `${require('path').basename(__dirname)}-electron`) {}
+    dirNameElectron = `xxx-electron`) {}
 ```
 
 #### setupElectron_index_html()

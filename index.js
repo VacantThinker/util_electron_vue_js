@@ -1,5 +1,8 @@
 'use strict';
 
+const path = require('path');
+const fs = require('fs');
+
 /**
  *
  * @param nameDir {String}
@@ -135,6 +138,17 @@ function setupElectron_renderer_js(pathTarget = 'dist') {
   });
 }
 
+function getPathParent(logPath = false) {
+  const path = require('path');
+  const pathRoot = process.cwd();
+  const nameRoot = path.basename(pathRoot);
+  const parent = pathRoot.replace(nameRoot, '');
+  if (logPath){
+    console.log(`path parent=${parent}`);
+  }
+  return parent;
+}
+
 /**
  * vite build -->
  *
@@ -153,17 +167,16 @@ function setupElectron_renderer_js(pathTarget = 'dist') {
  */
 function setupVueToElectron(
     title = 'index.html title',
-    dirNameElectron
-        = `${require('path').basename(__dirname)}-electron`) {
+    dirNameElectron = `xxx-electron`) {
   execAsync(cmd.vite_build, () => {
     setupElectron_index_html(title);
     setupElectron_renderer_js();
-
     const fs = require('fs');
     const path = require('path');
+    const parent = getPathParent();
+
     console.log(`copying... `);
     let src = path.join('dist');
-    let parent = path.dirname(__dirname);
     let dest = path.join(parent, dirNameElectron, 'public');
     if (fs.existsSync(dest)) {
       fs.rmSync(dest, {recursive: true, force: true});

@@ -1,6 +1,6 @@
 {
   "name": "@vacantwalker/util_electron_vue_js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "description": " config vue to electron-forge webpack",
   "scripts": {},
