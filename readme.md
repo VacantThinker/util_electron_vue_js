@@ -98,7 +98,7 @@ function npmRunMakeOpenOutSquirrel(){}
 
 ## how to install ?
 ```shell
-npm install @vacantwalker/util_electron_vue_js -D
+npm install @vacantthinker/util_electron_vue_js -D
 ```
 
 
