@@ -1,21 +1,6 @@
 'use strict';
 
 /**
- *
- * @param nameDir {String}
- */
-function deleteDir(nameDir) {
-  const fs = require('fs');
-  const path = require('path');
-  const pathDir = path.join(__dirname, nameDir);
-  if (fs.existsSync(pathDir)) {
-    fs.rmSync(pathDir, {
-      recursive: true, force: true,
-    });
-  }
-}
-
-/**
  * read env file , eg: env.sh xxx.env
  *
  * @param filename path env file
@@ -54,7 +39,7 @@ function readEnvFile(filename, logIt = false) {
 }
 
 /**
- * 
+ *
  * @param pathTarget
  * @param logObj
  * @returns {any}
@@ -150,7 +135,7 @@ function getPathRoot(logIt = false) {
   if (logIt) {
     console.log(`pathRoot\n${pathRoot}`);
   }
-  return pathRoot
+  return pathRoot;
 }
 
 /**
@@ -169,6 +154,11 @@ function getPathParent(logIt = false) {
   return pathParent;
 }
 
+/**
+ *
+ * @param logIt
+ * @returns {string}
+ */
 function getPathElectron(logIt = false) {
   const path = require('path');
   const pathRoot = process.cwd();
@@ -180,7 +170,6 @@ function getPathElectron(logIt = false) {
   }
   return pathElectron;
 }
-
 
 /**
  * npm run build (vite build) -->
@@ -268,17 +257,34 @@ function execAsync(cmd = '', callback = null) {
   });
 }
 
+/**
+ * npm install
+ */
 function npmInstall() {
   execSync(cmd.npm_install);
 }
 
+/**
+ * yarn install
+ */
 function yarnInstall() {
   execSync(cmd.yarn_install);
 }
 
-function openDirElectronOutSquirrel() {
+/**
+ *
+ * open (electron) dir -->
+ *
+ * out/make/squirrel.windows/x64
+ *
+ * @param logIt
+ */
+function openDirElectronOutSquirrel(logIt = false) {
   const path = require('path');
   const path_x64 = path.join('out', 'make', 'squirrel.windows', 'x64');
+  if (logIt) {
+    console.log(`path_x64\n${path_x64}`);
+  }
   const cmd = `start "o" ${path_x64}`;
   execAsync(cmd);
 }
