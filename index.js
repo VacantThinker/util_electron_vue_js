@@ -19,10 +19,10 @@ function deleteDir(nameDir) {
  * read env file , eg: env.sh xxx.env
  *
  * @param filename path env file
- * @param logObj default: false
+ * @param logIt default: false
  * @returns {{}}
  */
-function readEnvFile(filename, logObj = false) {
+function readEnvFile(filename, logIt = false) {
   const fs = require('fs');
   const path = require('path');
   const buffer = fs.readFileSync(path.join(filename));
@@ -38,7 +38,7 @@ function readEnvFile(filename, logObj = false) {
     const regexpVal = /(?<=\=).+/;
     const envVal = value.match(regexpVal)[0].replace(/\"/g, '');
 
-    if (logObj) {
+    if (logIt) {
       console.log(`key=${envKey}\nvalue=${envVal}\n`);
     }
 
@@ -46,7 +46,7 @@ function readEnvFile(filename, logObj = false) {
     return map;
   }, {});
 
-  if (logObj) {
+  if (logIt) {
     console.log('\nenvObject=\n', reduce);
   }
 
@@ -135,16 +135,46 @@ function setupElectron_renderer_js(pathTarget = 'dist') {
   });
 }
 
-function getPathParent(logPath = false) {
+/**
+ *
+ * @param logIt
+ */
+function getPathRoot(logIt = false) {
+  let pathRoot = process.cwd();
+  if (logIt) {
+    console.log(`pathRoot\n${pathRoot}`);
+  }
+  return pathRoot
+}
+
+/**
+ *
+ * @param logIt
+ * @returns {string}
+ */
+function getPathParent(logIt = false) {
   const path = require('path');
   const pathRoot = process.cwd();
   const nameRoot = path.basename(pathRoot);
-  const parent = pathRoot.replace(nameRoot, '');
-  if (logPath){
-    console.log(`path parent=${parent}`);
+  const pathParent = pathRoot.replace(nameRoot, '');
+  if (logIt) {
+    console.log(`pathParent\n${pathParent}`);
   }
-  return parent;
+  return pathParent;
 }
+
+function getPathElectron(logIt = false) {
+  const path = require('path');
+  const pathRoot = process.cwd();
+  const nameRoot = path.basename(pathRoot);
+  const pathParent = pathRoot.replace(nameRoot, '');
+  const pathElectron = path.join(pathParent, `${nameRoot}-electron`);
+  if (logIt) {
+    console.log(`pathElectron\n${pathElectron}`);
+  }
+  return pathElectron;
+}
+
 
 /**
  * npm run build (vite build) -->
@@ -164,16 +194,16 @@ function getPathParent(logPath = false) {
  */
 function setupVueToElectron(
     title = 'index.html title',
-    dirNameElectron = `xxx-electron`) {
+    dirNameElectron
+        = `${getPathElectron(true)}`) {
   execAsync(cmd.npm_build, () => {
     setupElectron_index_html(title);
     setupElectron_renderer_js();
     const fs = require('fs');
     const path = require('path');
-    const parent = getPathParent();
 
     const src = path.join('dist');
-    const dest = path.join(parent, dirNameElectron, 'public');
+    const dest = path.join(dirNameElectron, 'public');
     if (fs.existsSync(dest)) {
       console.log(`dest exists --> rm ... ${dest}`);
       fs.rmSync(dest, {recursive: true, force: true});
@@ -185,14 +215,21 @@ function setupVueToElectron(
   });
 }
 
+/**
+ * require('child_process').execSync(cmd)
+ * @param cmd
+ */
 function execSync(cmd) {
   console.log(`execSync() cmd=${cmd}`);
   require('child_process').execSync(cmd);
   console.log(`execSync() finished... cmd=${cmd}`);
 }
 
+/**
+ * npm cache clean --force
+ */
 function npmCacheClean() {
-  execSync(`npm cache clean --force `);
+  execSync(cmd.npm_cache_clean_force);
 }
 
 /**
@@ -226,11 +263,11 @@ function execAsync(cmd = '', callback = null) {
 }
 
 function npmInstall() {
-  execSync(`npm install`);
+  execSync(cmd.npm_install);
 }
 
 function yarnInstall() {
-  execSync(`npm install`);
+  execSync(cmd.yarn_install);
 }
 
 function openDirElectronOutSquirrel() {
@@ -245,28 +282,34 @@ function openDirElectronOutSquirrel() {
  *
  * then open out/make/squirrel.windows/x64/ dir
  */
-function npmRunMakeOpenOutSquirrel(){
-  execAsync(cmd.npm_make,() => {
-    openDirElectronOutSquirrel()
-  })
+function npmRunMakeOpenOutSquirrel() {
+  execAsync(cmd.npm_make, () => {
+    openDirElectronOutSquirrel();
+  });
 }
 
 const cmd = {
+  yarn_install: `yarn install`,
+  npm_install: `npm install`,
+
   // `npm run build`
   npm_build: `npm run build`,
-  // `start "npm run make" npm run make`
-  npm_make: `start "npm run make" npm run make`
+  // `npm run make`
+  npm_make: `npm run make`,
+  npm_cache_clean_force: `npm cache clean --force`,
 };
 
 module.exports = {
   setupVueToElectron: setupVueToElectron,
   setupElectron_index_html: setupElectron_index_html,
-  setupElectron_renderer_js:setupElectron_renderer_js,
+  setupElectron_renderer_js: setupElectron_renderer_js,
 
   cmd: cmd,
 
   readEnvFile: readEnvFile,
   readPackageJson: readPackageJson,
+  getPathParent: getPathParent,
+  getPathRoot: getPathRoot,
 
   execSync: execSync,
   execAsync: execAsync,

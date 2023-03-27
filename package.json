@@ -1,9 +1,13 @@
 {
   "name": "@vacantthinker/util_electron_vue_js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "description": " config vue to electron-forge webpack",
-  "scripts": {},
+  "scripts": {
+    "publish": "yarn publish --access public",
+    "git_acp": "git add . && git commit -m 'update' && git push --force",
+    "git_p": "git push"
+  },
   "author": {
     "name": "vacantthinker"
   },
