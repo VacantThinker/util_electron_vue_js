@@ -4,10 +4,8 @@
   "main": "index.js",
   "description": " config vue to electron-forge webpack",
   "scripts": {
-    "yarn_publish": "yarn publish --access public",
-    "yarn_pack": "yarn pack",
     "git_acp": "git add . && git commit -m 'update' && git push --force",
-    "git_p": "git push"
+    "git_p": "git push --force"
   },
   "author": {
     "name": "vacantthinker"
