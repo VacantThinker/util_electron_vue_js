@@ -53,6 +53,12 @@ function readEnvFile(filename, logIt = false) {
   return reduce;
 }
 
+/**
+ * 
+ * @param pathTarget
+ * @param logObj
+ * @returns {any}
+ */
 function readPackageJson(pathTarget = 'package.json', logObj = false) {
   const fs = require('fs');
   const path = require('path');
