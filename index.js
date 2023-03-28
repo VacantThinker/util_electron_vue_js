@@ -1,15 +1,16 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
+
 /**
  * read env file , eg: env.sh xxx.env
  *
  * @param filename path env file
- * @param logIt default: false
  * @returns {{}}
  */
-function readEnvFile(filename, logIt = false) {
-  const fs = require('fs');
-  const path = require('path');
+function readEnvFile(filename) {
   const buffer = fs.readFileSync(path.join(filename));
   const textContent = buffer.toString();
 
@@ -23,17 +24,9 @@ function readEnvFile(filename, logIt = false) {
     const regexpVal = /(?<=\=).+/;
     const envVal = value.match(regexpVal)[0].replace(/\"/g, '');
 
-    if (logIt) {
-      console.log(`key=${envKey}\nvalue=${envVal}\n`);
-    }
-
     map[envKey] = envVal;
     return map;
   }, {});
-
-  if (logIt) {
-    console.log('\nenvObject=\n', reduce);
-  }
 
   return reduce;
 }
@@ -41,21 +34,14 @@ function readEnvFile(filename, logIt = false) {
 /**
  *
  * @param pathTarget
- * @param logObj
  * @returns {any}
  */
-function readPackageJson(pathTarget = 'package.json', logObj = false) {
-  const fs = require('fs');
-  const path = require('path');
-
+function readPackageJson(pathTarget = 'package.json') {
   const path_package_json = path.join(pathTarget);
   const buffer = fs.readFileSync(path_package_json);
   const textContent = buffer.toString();
 
   const objPackageJson = JSON.parse(textContent);
-  if (logObj) {
-    console.log('object package.json --> \n', objPackageJson);
-  }
   return objPackageJson;
 }
 
@@ -90,8 +76,7 @@ function setupElectron_index_html(
 </body>
 </html>
 `;
-  const fs = require('fs');
-  const path = require('path');
+
   const string_index_html = 'index.html';
   const path_index_html = path.join(pathTarget, string_index_html);
   fs.writeFileSync(path_index_html, '');
@@ -111,8 +96,6 @@ function setupElectron_index_html(
  * @param pathTarget {String}
  */
 function setupElectron_renderer_js(pathTarget = 'dist') {
-  const fs = require('fs');
-  const path = require('path');
   const string_assets = 'assets';
   const string_renderer_js = 'renderer.js';
   const path_assets = path.join(pathTarget, string_assets);
@@ -126,31 +109,15 @@ function setupElectron_renderer_js(pathTarget = 'dist') {
   });
 }
 
-/**
- *
- * @param logIt
- */
-function getPathRoot(logIt = false) {
+function getPathRoot() {
   let pathRoot = process.cwd();
-  if (logIt) {
-    console.log(`pathRoot\n${pathRoot}`);
-  }
   return pathRoot;
 }
 
-/**
- *
- * @param logIt
- * @returns {string}
- */
-function getPathParent(logIt = false) {
-  const path = require('path');
+function getPathParent() {
   const pathRoot = process.cwd();
   const nameRoot = path.basename(pathRoot);
   const pathParent = pathRoot.replace(nameRoot, '');
-  if (logIt) {
-    console.log(`pathParent\n${pathParent}`);
-  }
   return pathParent;
 }
 
@@ -160,7 +127,6 @@ function getPathParent(logIt = false) {
  * @returns {string}
  */
 function getPathElectron(logIt = false) {
-  const path = require('path');
   const pathRoot = process.cwd();
   const nameRoot = path.basename(pathRoot);
   const pathParent = pathRoot.replace(nameRoot, '');
@@ -194,9 +160,6 @@ function setupVueToElectron(
   execAsync(cmd.npm_build, () => {
     setupElectron_index_html(title);
     setupElectron_renderer_js();
-    const fs = require('fs');
-    const path = require('path');
-
     const src = path.join('dist');
     const dest = path.join(dirNameElectron, 'public');
     if (fs.existsSync(dest)) {
@@ -280,7 +243,6 @@ function yarnInstall() {
  * @param logIt
  */
 function openDirElectronOutSquirrel(logIt = false) {
-  const path = require('path');
   const path_x64 = path.join('out', 'make', 'squirrel.windows', 'x64');
   if (logIt) {
     console.log(`path_x64\n${path_x64}`);
