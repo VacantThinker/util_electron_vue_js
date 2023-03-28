@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 
-
 /**
  * read env file , eg: env.sh xxx.env
  *
@@ -59,8 +58,12 @@ function readPackageJson(pathTarget = 'package.json') {
  * @param pathTarget
  */
 function setupElectron_index_html(
-    title = 'index.html title',
+    title = null,
     pathTarget = 'dist') {
+
+  if (title === null) {
+    title = 'index.html title'
+  }
   const indexHtmlContent =
       `<!DOCTYPE html>
 <html lang="en">
@@ -123,17 +126,14 @@ function getPathParent() {
 
 /**
  *
- * @param logIt
  * @returns {string}
  */
-function getPathElectron(logIt = false) {
+function getPathElectron() {
   const pathRoot = process.cwd();
-  const nameRoot = path.basename(pathRoot);
-  const pathParent = pathRoot.replace(nameRoot, '');
-  const pathElectron = path.join(pathParent, `${nameRoot}-electron`);
-  if (logIt) {
-    console.log(`pathElectron\n${pathElectron}`);
-  }
+  const basename = path.basename(pathRoot);
+  const pathParent = pathRoot.replace(basename, '');
+  const pathElectron = path.join(pathParent, `${basename}-electron`);
+  console.log(`pathElectron=\n`, pathElectron, `\n`);
   return pathElectron;
 }
 
@@ -150,18 +150,26 @@ function getPathElectron(logIt = false) {
  *
  * end
  *
- * @param title index.html title
- * @param dirNameElectron
+ * @param indexHtmlTitle index.html title
+ * @param dirNameElectron electron project dir name
  */
 function setupVueToElectron(
-    title = 'index.html title',
-    dirNameElectron
-        = `${getPathElectron(true)}`) {
-  execAsync(cmd.npm_build, () => {
-    setupElectron_index_html(title);
+    indexHtmlTitle = null,
+    dirNameElectron = null) {
+
+  execAsync(cmd.npm_run_build, () => {
+    setupElectron_index_html(indexHtmlTitle);
     setupElectron_renderer_js();
-    const src = path.join('dist');
-    const dest = path.join(dirNameElectron, 'public');
+
+    let pathElectron = getPathRoot()
+    if (dirNameElectron === null) {
+      pathElectron = getPathElectron()
+    }else {
+      pathElectron = path.join(getPathParent(), dirNameElectron)
+    }
+
+    const src = path.join(getPathRoot(), 'dist');
+    const dest = path.join(pathElectron, 'public');
     if (fs.existsSync(dest)) {
       console.log(`dest exists --> rm ... ${dest}`);
       fs.rmSync(dest, {recursive: true, force: true});
@@ -169,7 +177,7 @@ function setupVueToElectron(
 
     console.log(`copy ... ${src}`);
     fs.cpSync(src, dest, {recursive: true, force: true});
-    console.log(`end ... ${dest}`);
+    console.log(` end ... ${dest}`);
   });
 }
 
@@ -223,15 +231,15 @@ function execAsync(cmd = '', callback = null) {
 /**
  * npm install
  */
-function npmInstall() {
-  execSync(cmd.npm_install);
+function npmInstallOnWindows() {
+  execSync(cmd.npm_install_windows_terminal);
 }
 
 /**
  * yarn install
  */
-function yarnInstall() {
-  execSync(cmd.yarn_install);
+function yarnInstallOnWindows() {
+  execSync(cmd.yarn_install_windows_terminal);
 }
 
 /**
@@ -257,19 +265,24 @@ function openDirElectronOutSquirrel(logIt = false) {
  * then open out/make/squirrel.windows/x64/ dir
  */
 function npmRunMakeOpenOutSquirrel() {
-  execAsync(cmd.npm_make, () => {
+  execAsync(cmd.npm_run_make, () => {
     openDirElectronOutSquirrel();
   });
 }
 
-const cmd = {
-  yarn_install: `yarn install`,
-  npm_install: `npm install`,
+function npmRunStart() {
+  execSync(cmd.npm_run_start_windows_terminal)
+}
 
+const cmd = {
+  yarn_install_windows_terminal: `start "" yarn install && exit`,
+  npm_install_windows_terminal: `start "" npm install && exit`,
+  // `start "" npm run start && exit`
+  npm_run_start_windows_terminal: `start "" npm run start && exit`,
   // `npm run build`
-  npm_build: `npm run build`,
+  npm_run_build: `npm run build`,
   // `npm run make`
-  npm_make: `npm run make`,
+  npm_run_make: `npm run make`,
   npm_cache_clean_force: `npm cache clean --force`,
 };
 
@@ -289,8 +302,9 @@ module.exports = {
   execAsync: execAsync,
   openDirElectronOutSquirrel: openDirElectronOutSquirrel,
   npmRunMakeOpenOutSquirrel: npmRunMakeOpenOutSquirrel,
+  npmRunStart: npmRunStart,
 
   npmCacheClean: npmCacheClean,
-  npmInstall: npmInstall,
-  yarnInstall: yarnInstall,
+  npmInstallOnWindows: npmInstallOnWindows,
+  yarnInstallOnWindows: yarnInstallOnWindows,
 };

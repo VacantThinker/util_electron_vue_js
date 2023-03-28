@@ -2,9 +2,12 @@
 ## how to use ?
 
 ```javascript
+const {setupVueToElectron} = require('@vacantthinker/util_electron_vue_js');
+
 const title = `electron index.html title`;
-const dirNameElectron = 'xxxx-electron-path';
+const dirNameElectron = 'xxxx-electron-project-path';
 setupVueToElectron(title, dirNameElectron);
+
 ```
 
 ## works
